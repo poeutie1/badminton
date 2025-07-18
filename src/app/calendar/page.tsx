@@ -2,31 +2,31 @@
 "use client";
 
 import { useState, useEffect } from "react";
+// ← ここに doc と updateDoc を追加！
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+
 import { Calendar } from "../components/Calendar";
-import type { PracticeEvent } from "../lib/types";
 import { db } from "../../lib/firebase";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import type { PracticeEvent } from "../lib/types";
 
 export default function CalendarPage() {
   const [events, setEvents] = useState<PracticeEvent[]>([]);
 
   useEffect(() => {
-    const q = query(collection(db, "events"), orderBy("date"));
-    return onSnapshot(q, (snap) => {
-      setEvents(
-        snap.docs.map((d) => {
+    async function fetchOnce() {
+      try {
+        const snap = await getDocs(collection(db, "events"));
+        const arr = snap.docs.map((d) => {
           const data = d.data() as Omit<PracticeEvent, "id">;
           return { id: d.id, ...data };
-        })
-      );
-    });
+        });
+        console.log("📦 getDocs result:", arr);
+        setEvents(arr);
+      } catch (e: any) {
+        console.error("❌ getDocs error:", e.code, e.message);
+      }
+    }
+    fetchOnce();
   }, []);
 
   const handleJoin = async (ev: PracticeEvent, nickname: string) => {
@@ -38,14 +38,18 @@ export default function CalendarPage() {
     });
   };
 
+  const handleCancel = async (ev: PracticeEvent, nickname: string) => {
+    const ref = doc(db, "events", ev.id);
+    await updateDoc(ref, {
+      participants: ev.participants.filter((n) => n !== nickname),
+      waitlist: ev.waitlist.filter((n) => n !== nickname),
+    });
+  };
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">練習カレンダー</h1>
-      {events.length === 0 ? (
-        <p>まだ練習会が登録されていません。</p>
-      ) : (
-        <Calendar events={events} onJoin={handleJoin} />
-      )}
+      <Calendar events={events} onJoin={handleJoin} onCancel={handleCancel} />
     </div>
   );
 }

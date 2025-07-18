@@ -20,13 +20,13 @@ export const Calendar = ({ events, onJoin, onCancel }: Props) => {
         placeholder="ニックネーム"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
-        className="border p-1 mb-4"
+        className="border p-1 mb-5 rounded-lg"
       />
       {events.map((e) => {
         const joined = e.participants.includes(nickname);
         const waiting = e.waitlist.includes(nickname);
         return (
-          <div key={e.id} className="border p-4 mb-2">
+          <div key={e.id} className="border p-4 mb-2 rounded-lg">
             <p>
               📅 {e.date} {e.time}
             </p>

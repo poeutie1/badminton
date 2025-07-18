@@ -2,7 +2,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// ← ここに doc と updateDoc を追加！
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 import { Calendar } from "../components/Calendar";
@@ -20,11 +19,9 @@ export default function CalendarPage() {
           const data = d.data() as Omit<PracticeEvent, "id">;
           return { id: d.id, ...data };
         });
-        console.log("📦 getDocs result:", arr);
+
         setEvents(arr);
-      } catch (e: any) {
-        console.error("❌ getDocs error:", e.code, e.message);
-      }
+      } catch (e: any) {}
     }
     fetchOnce();
   }, []);
@@ -48,7 +45,7 @@ export default function CalendarPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">練習カレンダー</h1>
+      <h1 className="text-2xl font-bold mb-4">練習日程</h1>
       <Calendar events={events} onJoin={handleJoin} onCancel={handleCancel} />
     </div>
   );

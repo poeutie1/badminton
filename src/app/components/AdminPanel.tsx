@@ -104,8 +104,10 @@ export default function AdminPanel() {
 
       {/* 既存一覧 */}
       <section>
-        <h2 className="font-semibold mb-2">既存の練習会一覧</h2>
-        <table className="min-w-full border-collapse">
+        <h2 className="font-semibold mb-2 rounded-lg overflow-hidden ">
+          既存の練習会一覧
+        </h2>
+        <table className="min-w-full border-collapse rounded-lg ">
           <thead>
             <tr>
               <th className="border px-2 py-1">日付</th>

@@ -7,7 +7,7 @@ export default function HowToUsePage() {
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">練習会への参加方法</h2>
         <ol className="list-decimal list-inside space-y-1">
-          <li>カレンダーから参加したい日をクリック</li>
+          <li>練習日程から参加したい日をクリック</li>
           <li>詳細を確認して「参加表明」をクリック</li>
           <li>ニックネームを入力して確定</li>
           <li>人数オーバーならキャンセル待ちに登録</li>

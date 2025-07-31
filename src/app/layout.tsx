@@ -15,7 +15,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className="min-h-screen flex flex-col">
         <header className="bg-gray-100 p-4 flex space-x-4">
-          <Link href="/calendar">Calendar</Link>
+          <Link href="/calendar">練習日程</Link>
           <Link href="/how-to-use">利用方法</Link>
           <Link href="/admin">管理画面</Link>
         </header>

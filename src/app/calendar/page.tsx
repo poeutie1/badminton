@@ -21,17 +21,16 @@ export default function CalendarPage() {
 
   useEffect(() => {
     const q = query(collection(db, "events"), orderBy("date"));
-    const unsubscribe = onSnapshot(
-      q,
-      (snap) => {
-        const arr = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
-        console.log("📦 onSnapshot events:", arr);
-        setEvents(arr);
-      },
-      (err) => {
-        console.error("❌ onSnapshot error:", err);
-      }
-    );
+    const unsubscribe = onSnapshot(q, (snap) => {
+      // Firestore のドキュメントには id が含まれないので、
+      // d.data() は PracticeEvent から id を除いた型
+      const arr = snap.docs.map((d) => {
+        const data = d.data() as Omit<PracticeEvent, "id">;
+        return { id: d.id, ...data };
+      });
+      console.log("📦 onSnapshot events:", arr);
+      setEvents(arr);
+    });
     return () => unsubscribe();
   }, []);
 

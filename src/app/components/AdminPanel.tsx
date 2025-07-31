@@ -12,7 +12,6 @@ import {
   addDoc,
   deleteDoc,
   doc,
-  updateDoc,
 } from "firebase/firestore";
 
 export default function AdminPanel() {

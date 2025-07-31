@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import {
   collection,
   query,
+  runTransaction,
   orderBy,
   onSnapshot,
   doc,
@@ -56,14 +57,32 @@ export default function CalendarPage() {
   const handleCancel = async (ev: PracticeEvent, nickname: string) => {
     console.log("▶️ handleCancel called:", { eventId: ev.id, nickname });
     const ref = doc(db, "events", ev.id);
+
     try {
-      await updateDoc(ref, {
-        participants: arrayRemove(nickname),
-        waitlist: arrayRemove(nickname),
+      await runTransaction(db, async (tx) => {
+        const sf = await tx.get(ref);
+        if (!sf.exists()) throw new Error("イベントが見つかりません");
+        // ドキュメントの現在値を取得
+        const data = sf.data() as Omit<PracticeEvent, "id">;
+        // 参加リストから自分を外す
+        const newParts = data.participants.filter((n) => n !== nickname);
+        // 待機リストはそのまま
+        let newWait = [...data.waitlist];
+
+        // 空席があるなら待機列の先頭を繰り上げ
+        if (newParts.length < data.capacity && newWait.length > 0) {
+          const nextUser = newWait.shift()!; // FIFO で先頭を取り出し
+          newParts.push(nextUser); // 参加リストに追加
+        }
+        tx.update(ref, {
+          participants: newParts,
+          waitlist: newWait,
+        });
       });
-      console.log("✔️ cancel succeeded");
+
+      console.log("✔️ cancel + promote succeeded");
     } catch (e) {
-      console.error("❌ cancel error:", e);
+      console.error("❌ cancel + promote error:", e);
     }
   };
 

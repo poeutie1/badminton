@@ -20,13 +20,13 @@ export const Calendar = ({ events, onJoin, onCancel }: Props) => {
         placeholder="ニックネーム"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
-        className="border p-1 mb-4"
+        className="border p-1 mb-4 rounded"
       />
       {events.map((e) => {
         const joined = e.participants.includes(nickname);
         const waiting = e.waitlist.includes(nickname);
         return (
-          <div key={e.id} className="border p-4 mb-2">
+          <div key={e.id} className="border p-4 mb-2 rounded">
             <p>
               📅 {e.date} {e.time}
             </p>
@@ -34,8 +34,8 @@ export const Calendar = ({ events, onJoin, onCancel }: Props) => {
             <p>
               定員: {e.participants.length}/{e.capacity}
             </p>
-            <p>参加者: {e.participants.join("、") || "なし"}</p>
-            <p>キャンセル待ち: {e.waitlist.join("、") || "なし"}</p>
+            <p>参加者: {e.participants.join("・") || "なし"}</p>
+            <p>キャンセル待ち: {e.waitlist.join("・") || "なし"}</p>
 
             <div className="mt-2 space-x-2">
               {!joined && !waiting && (

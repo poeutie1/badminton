@@ -2,9 +2,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-// ← ここに doc と updateDoc を追加！
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
-
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import { Calendar } from "../components/Calendar";
 import { db } from "../../lib/firebase";
 import type { PracticeEvent } from "../lib/types";
@@ -13,37 +20,52 @@ export default function CalendarPage() {
   const [events, setEvents] = useState<PracticeEvent[]>([]);
 
   useEffect(() => {
-    async function fetchOnce() {
-      try {
-        const snap = await getDocs(collection(db, "events"));
-        const arr = snap.docs.map((d) => {
-          const data = d.data() as Omit<PracticeEvent, "id">;
-          return { id: d.id, ...data };
-        });
-        console.log("📦 getDocs result:", arr);
+    const q = query(collection(db, "events"), orderBy("date"));
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const arr = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
+        console.log("📦 onSnapshot events:", arr);
         setEvents(arr);
-      } catch (e: any) {
-        console.error("❌ getDocs error:", e.code, e.message);
+      },
+      (err) => {
+        console.error("❌ onSnapshot error:", err);
       }
-    }
-    fetchOnce();
+    );
+    return () => unsubscribe();
   }, []);
 
   const handleJoin = async (ev: PracticeEvent, nickname: string) => {
+    console.log("▶️ handleJoin called:", { eventId: ev.id, nickname });
+    if (!nickname.trim()) {
+      alert("名前を入れてください");
+      return;
+    }
     const ref = doc(db, "events", ev.id);
     const isFull = ev.participants.length >= ev.capacity;
-    await updateDoc(ref, {
-      participants: isFull ? ev.participants : [...ev.participants, nickname],
-      waitlist: isFull ? [...ev.waitlist, nickname] : ev.waitlist,
-    });
+    try {
+      await updateDoc(ref, {
+        participants: isFull ? ev.participants : arrayUnion(nickname),
+        waitlist: isFull ? arrayUnion(nickname) : ev.waitlist,
+      });
+      console.log("✔️ updateDoc succeeded");
+    } catch (e) {
+      console.error("❌ updateDoc error:", e);
+    }
   };
 
   const handleCancel = async (ev: PracticeEvent, nickname: string) => {
+    console.log("▶️ handleCancel called:", { eventId: ev.id, nickname });
     const ref = doc(db, "events", ev.id);
-    await updateDoc(ref, {
-      participants: ev.participants.filter((n) => n !== nickname),
-      waitlist: ev.waitlist.filter((n) => n !== nickname),
-    });
+    try {
+      await updateDoc(ref, {
+        participants: arrayRemove(nickname),
+        waitlist: arrayRemove(nickname),
+      });
+      console.log("✔️ cancel succeeded");
+    } catch (e) {
+      console.error("❌ cancel error:", e);
+    }
   };
 
   return (

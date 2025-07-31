@@ -14,6 +14,9 @@ export default function HowToUsePage() {
           <small className="block mt-1 text-gray-600">
             ※参加表明をキャンセルする場合は、参加表明時と同様のニックネームを記入すると表示される参加キャンセルボタンを押す
           </small>
+          <small className="block mt-1 text-red-600">
+            ※参加表明時のニックネームは既に参加者欄にある名前以外を使用してください
+          </small>
         </ol>
       </section>
 

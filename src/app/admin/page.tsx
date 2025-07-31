@@ -25,7 +25,7 @@ export default function AdminPage() {
           placeholder="パスワード"
           value={pw}
           onChange={(e) => setPw(e.target.value)}
-          className="border p-2 w-full mb-4"
+          className="border p-2 w-full mb-4 rounded"
         />
         <button
           onClick={onLogin}

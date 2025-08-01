@@ -5,13 +5,12 @@ import { useState, useEffect } from "react";
 import {
   collection,
   query,
-  runTransaction,
   orderBy,
   onSnapshot,
   doc,
   updateDoc,
+  runTransaction,
   arrayUnion,
-  arrayRemove,
 } from "firebase/firestore";
 import { Calendar } from "../components/Calendar";
 import { db } from "../../lib/firebase";
@@ -23,8 +22,6 @@ export default function CalendarPage() {
   useEffect(() => {
     const q = query(collection(db, "events"), orderBy("date"));
     const unsubscribe = onSnapshot(q, (snap) => {
-      // Firestore のドキュメントには id が含まれないので、
-      // d.data() は PracticeEvent から id を除いた型
       const arr = snap.docs.map((d) => {
         const data = d.data() as Omit<PracticeEvent, "id">;
         return { id: d.id, ...data };
@@ -45,6 +42,7 @@ export default function CalendarPage() {
     const isFull = ev.participants.length >= ev.capacity;
     try {
       await updateDoc(ref, {
+        // 定員に達していなければ participants に追加、達していれば waitlist に追加
         participants: isFull ? ev.participants : arrayUnion(nickname),
         waitlist: isFull ? arrayUnion(nickname) : ev.waitlist,
       });
@@ -62,24 +60,24 @@ export default function CalendarPage() {
       await runTransaction(db, async (tx) => {
         const sf = await tx.get(ref);
         if (!sf.exists()) throw new Error("イベントが見つかりません");
-        // ドキュメントの現在値を取得
         const data = sf.data() as Omit<PracticeEvent, "id">;
-        // 参加リストから自分を外す
-        const newParts = data.participants.filter((n) => n !== nickname);
-        // 待機リストはそのまま
-        let newWait = [...data.waitlist];
 
-        // 空席があるなら待機列の先頭を繰り上げ
-        if (newParts.length < data.capacity && newWait.length > 0) {
-          const nextUser = newWait.shift()!; // FIFO で先頭を取り出し
-          newParts.push(nextUser); // 参加リストに追加
+        // 参加リストから削除
+        let newParticipants = data.participants.filter((n) => n !== nickname);
+        // 待機リストはコピー
+        let newWaitlist = [...data.waitlist];
+
+        // 定員に空きができたら、待機列の先頭を繰り上げ
+        if (newParticipants.length < data.capacity && newWaitlist.length > 0) {
+          const nextUser = newWaitlist.shift()!; // FIFO
+          newParticipants.push(nextUser);
         }
+
         tx.update(ref, {
-          participants: newParts,
-          waitlist: newWait,
+          participants: newParticipants,
+          waitlist: newWaitlist,
         });
       });
-
       console.log("✔️ cancel + promote succeeded");
     } catch (e) {
       console.error("❌ cancel + promote error:", e);

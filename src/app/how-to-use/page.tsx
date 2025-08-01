@@ -7,12 +7,12 @@ export default function HowToUsePage() {
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">練習会への参加方法</h2>
         <ol className="list-decimal list-inside space-y-1">
-          <li>練習日程から参加したい日をクリック</li>
-          <li>詳細を確認して「参加表明」をクリック</li>
-          <li>ニックネームを入力して確定</li>
+          <li>
+            ニックネームを入力し、練習日程から参加したい日に参加表明ボタンを押す
+          </li>
           <li>人数オーバーならキャンセル待ちに登録</li>
           <li>
-            キャンセル待ちは枠に空きが出た際に、自動的に登録順（早い順）で繰り上がる
+            キャンセル待ちは枠に空きが出た際に、自動的に登録順（早い順）で繰り上がる（反映に数秒かかりますのでお待ちください）
           </li>
           <small className="block mt-1 text-gray-600">
             ※参加表明をキャンセルする場合は、参加表明時と同様のニックネームを記入すると表示される参加キャンセルボタンを押す

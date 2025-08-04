@@ -63,9 +63,9 @@ export default function CalendarPage() {
         const data = sf.data() as Omit<PracticeEvent, "id">;
 
         // 参加リストから削除
-        let newParticipants = data.participants.filter((n) => n !== nickname);
+        const newParticipants = data.participants.filter((n) => n !== nickname);
         // 待機リストはコピー
-        let newWaitlist = [...data.waitlist];
+        const newWaitlist = [...data.waitlist];
 
         // 定員に空きができたら、待機列の先頭を繰り上げ
         if (newParticipants.length < data.capacity && newWaitlist.length > 0) {

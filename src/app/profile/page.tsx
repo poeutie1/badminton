@@ -92,7 +92,7 @@ export default function ProfilePage() {
 
       <h2 className="text-xl font-semibold mb-4">練習会一覧</h2>
       {events.map((ev) => {
-        const joined = ev.participants.includes(userId);
+        const joined = ev.participants.includes(userId!);
         return (
           <div key={ev.id} className="border p-4 rounded mb-4">
             <p>

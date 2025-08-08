@@ -22,6 +22,7 @@ export default function RootLayout({
             <Link href="/profile">マイページ</Link>
             <Link href="/calendar">練習日程</Link>
             <Link href="/how-to-use">利用方法</Link>
+            <Link href="/events">練習会一覧</Link>
             <Link href="/admin">管理画面</Link>
             <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></Script>
           </header>

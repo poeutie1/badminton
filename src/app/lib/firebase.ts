@@ -1,5 +1,5 @@
 // src/lib/firebase.ts
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -12,7 +12,5 @@ const firebaseConfig = {
 };
 
 // ここで必ず正しい値が出ているか確認！
-console.log("🔥 Firebase config:", firebaseConfig);
-
-const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const db = getFirestore(app);

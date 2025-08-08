@@ -1,10 +1,10 @@
 // lib/types.ts
-export type PracticeEvent = {
+// src/app/lib/types.ts
+export type Event = {
   id: string;
+  title: string;
+  description: string;
   date: string;
-  time: string;
   location: string;
-  capacity: number;
-  participants: string[];
-  waitlist: string[];
+  participants: { id: string }[]; // 必要なら name など追加もOK
 };

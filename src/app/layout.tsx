@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import "./globals.css";
 import Link from "next/link";
+import Script from "next/script";
 import { Providers } from "./providers"; // ← our client wrapper
 
 export const metadata = {
@@ -22,6 +23,7 @@ export default function RootLayout({
             <Link href="/calendar">練習日程</Link>
             <Link href="/how-to-use">利用方法</Link>
             <Link href="/admin">管理画面</Link>
+            <Script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></Script>
           </header>
           <main className="flex-1 p-4">{children}</main>
         </Providers>

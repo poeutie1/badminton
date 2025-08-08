@@ -1,41 +1,27 @@
 // src/app/admin/page.tsx
 "use client";
 
-import { useState } from "react";
 import AdminPanel from "../components/AdminPanel";
 
+import { useEffect, useState } from "react";
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
+export const dynamic = "force-dynamic";
+
 export default function AdminPage() {
-  const [auth, setAuth] = useState(false);
-  const [pw, setPw] = useState("");
+  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
 
-  const onLogin = () => {
-    if (pw === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      setAuth(true);
-    } else {
-      alert("パスワードが違います");
-    }
-  };
+  useEffect(() => {
+    const app = initializeApp({
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
+      // …他オプション…
+    });
+    setAuth(getAuth(app));
+  }, []);
 
-  if (!auth) {
-    return (
-      <div className="max-w-sm mx-auto mt-20 p-4 border rounded">
-        <h1 className="text-xl font-bold mb-2">管理者ログイン</h1>
-        <input
-          type="password"
-          placeholder="パスワード"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-          className="border p-2 w-full mb-4 rounded"
-        />
-        <button
-          onClick={onLogin}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          ログイン
-        </button>
-      </div>
-    );
-  }
+  if (!auth) return <p>Loading…</p>;
 
-  return <AdminPanel />;
+  // auth をつかって管理画面の UI をレンダリング
+  return <div>管理者画面ここから</div>;
 }

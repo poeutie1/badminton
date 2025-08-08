@@ -24,7 +24,7 @@ export default function ProfilePage() {
 
         if (!liff.isLoggedIn()) {
           // 未ログインなら再帰的に現在URLへリダイレクト
-          liff.login({ redirectUri: `$ {window.location.origin}/profile` });
+          liff.login();
           return;
         }
 

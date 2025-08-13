@@ -1,8 +1,6 @@
 // src/app/admin/page.tsx
 "use client";
 
-import AdminPanel from "../components/AdminPanel";
-
 import { useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
